@@ -94,13 +94,23 @@ const styles = {
     borderRadius: theme.borderRadius.lg,
     border: `1px solid ${theme.colors.border}`,
     cursor: 'pointer',
-    transition: 'all 0.2s ease',
+    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
     textAlign: 'center',
+    animation: 'fadeIn 0.5s ease forwards',
+    animationDelay: 'calc(var(--index) * 100ms)',
+    opacity: 0,
     '&:hover': {
-      transform: 'translateY(-4px)',
+      transform: 'translateY(-8px)',
       boxShadow: theme.shadows.md,
       borderColor: theme.colors.primary,
+      '& svg': {
+        transform: 'scale(1.1)',
+        color: theme.colors.primary,
+      }
     },
+    '& svg': {
+      transition: 'all 0.3s ease',
+    }
   },
   featureIcon: {
     fontSize: '48px',

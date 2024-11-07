@@ -11,8 +11,10 @@ import { auth } from './firebase';
 import NavigationBar from './components/Navbar'; // Ensure this import is correct
 
 function App() {
+  // Authentication state management
   const [user, setUser] = useState(null);
 
+  // Listen for authentication state changes
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       setUser(user);
@@ -35,8 +37,8 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/translate" element={<Translate user={user} />} />
               <Route path="/history" element={<History user={user} />} />
-              <Route path="/voice-translation" element={<VoiceTranslation />} /> {/* New route for voice translation */}
-              <Route path="/image-translation" element={<ImageTranslation />} /> {/* New route for image translation */}
+              <Route path="/voice-translation" element={<VoiceTranslation user={user} />} /> {/* New route for voice translation */}
+              <Route path="/image-translation" element={<ImageTranslation user={user} />} /> {/* New route for image translation */}
               <Route path="/sign-language" element={<SignLanguageDetection />} /> {/* New route for sign language detection */}
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>

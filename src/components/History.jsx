@@ -3,7 +3,29 @@ import React, { useState, useEffect } from 'react';
 import { collection, query, where, orderBy, limit, getDocs } from 'firebase/firestore';
 import { db } from '../firebase';
 import theme from '../styles/theme';
-import { AccessTime, SwapHoriz } from '@mui/icons-material';
+import { 
+  AccessTime, 
+  SwapHoriz, 
+  Translate, 
+  Mic, 
+  Image 
+} from '@mui/icons-material';
+
+const TranslationTypeIcon = ({ type }) => {
+  const iconStyle = {
+    fontSize: '20px',
+    color: theme.colors.primary,
+  };
+
+  switch (type) {
+    case 'voice':
+      return <Mic style={iconStyle} />;
+    case 'image':
+      return <Image style={iconStyle} />;
+    default:
+      return <Translate style={iconStyle} />;
+  }
+};
 
 const History = ({ user }) => {
   const [history, setHistory] = useState([]);
@@ -53,9 +75,14 @@ const History = ({ user }) => {
           {history.map((item) => (
             <div key={item.id} style={styles.historyItem}>
               <div style={styles.itemHeader}>
-                <div style={styles.timestamp}>
-                  <AccessTime style={styles.icon} />
-                  {item.timestamp ? item.timestamp.toLocaleString() : 'Date not available'}
+                <div style={styles.headerLeft}>
+                  <div style={styles.timestamp}>
+                    <AccessTime style={styles.icon} />
+                    {item.timestamp ? item.timestamp.toLocaleString() : 'Date not available'}
+                  </div>
+                  <div style={styles.translationType}>
+                    <TranslationTypeIcon type={item.type} />
+                  </div>
                 </div>
                 <div style={styles.languagePair}>
                   {item.fromLanguage}
@@ -168,6 +195,18 @@ const styles = {
     fontSize: theme.typography.sizes.base,
     color: theme.colors.text.primary,
     lineHeight: '1.5',
+  },
+  headerLeft: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: theme.spacing.md,
+  },
+  translationType: {
+    display: 'flex',
+    alignItems: 'center',
+    padding: `${theme.spacing.xs} ${theme.spacing.sm}`,
+    backgroundColor: `${theme.colors.primary}10`,
+    borderRadius: theme.borderRadius.sm,
   },
 };
 

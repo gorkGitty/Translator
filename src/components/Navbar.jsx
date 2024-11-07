@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import theme from '../styles/theme';
-import { TranslateOutlined, MicOutlined, ImageOutlined, HistoryOutlined, Logout } from '@mui/icons-material';
+import { TranslateOutlined, MicOutlined, ImageOutlined, HistoryOutlined, Logout, SignLanguage } from '@mui/icons-material';
 
 const Navbar = ({ onLogout }) => {
   const location = useLocation();
@@ -33,6 +33,7 @@ const Navbar = ({ onLogout }) => {
             <NavLink to="/translate" icon={<TranslateOutlined />} label="Text" />
             <NavLink to="/voice-translation" icon={<MicOutlined />} label="Voice" />
             <NavLink to="/image-translation" icon={<ImageOutlined />} label="Image" />
+            <NavLink to="/sign-language" icon={<SignLanguage />} label="Sign" />
             <NavLink to="/history" icon={<HistoryOutlined />} label="History" />
           </div>
           <button onClick={onLogout} style={styles.logoutButton}>
@@ -86,12 +87,28 @@ const styles = {
     textDecoration: 'none',
     padding: `${theme.spacing.sm} ${theme.spacing.md}`,
     borderRadius: theme.borderRadius.md,
-    transition: 'all 0.2s ease',
+    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
     fontSize: theme.typography.sizes.sm,
+    position: 'relative',
+    backgroundColor: 'transparent',
+    '&:hover': {
+      transform: 'translateY(-2px)',
+      backgroundColor: `${theme.colors.primary}15`,
+      color: theme.colors.primary,
+      boxShadow: '0 4px 8px rgba(59, 130, 246, 0.15)',
+    },
+    '&:active': {
+      transform: 'translateY(0)',
+    }
   },
   activeLink: {
-    backgroundColor: `${theme.colors.primary}10`,
+    backgroundColor: `${theme.colors.primary}20`,
     color: theme.colors.primary,
+    transform: 'translateY(-2px)',
+    boxShadow: '0 4px 8px rgba(59, 130, 246, 0.15)',
+    '&:hover': {
+      backgroundColor: `${theme.colors.primary}25`,
+    }
   },
   linkText: {
     marginLeft: theme.spacing.xs,

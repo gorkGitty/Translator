@@ -5,8 +5,10 @@ import { translateText } from '../api';
 import theme from '../styles/theme';
 import { CloudUpload, Translate } from '@mui/icons-material';
 import languagesData from '../languages.json';
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { db } from '../firebase';
 
-const ImageTranslation = () => {
+const ImageTranslation = ({ user }) => {
   const [image, setImage] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [translatedText, setTranslatedText] = useState('');
@@ -27,7 +29,10 @@ const ImageTranslation = () => {
   };
 
   const handleTranslateImage = async () => {
-    if (!image) return;
+    if (!image || !user) {
+      console.error('No image selected or user not authenticated');
+      return;
+    }
 
     setLoading(true);
     try {
@@ -35,6 +40,16 @@ const ImageTranslation = () => {
       const extractedText = result.data.text;
       const translation = await translateText('en', toLanguage, extractedText);
       setTranslatedText(translation.translation);
+
+      await addDoc(collection(db, 'history'), {
+        uid: user.uid,
+        original: extractedText,
+        translated: translation.translation,
+        fromLanguage: 'en',
+        toLanguage,
+        timestamp: serverTimestamp(),
+        type: 'image'
+      });
     } catch (error) {
       console.error('Translation error:', error);
       setTranslatedText('Translation failed. Please try again.');

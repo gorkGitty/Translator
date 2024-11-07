@@ -199,10 +199,33 @@ const styles = {
     fontSize: theme.typography.sizes.base,
     fontWeight: '500',
     cursor: 'pointer',
-    transition: 'background-color 0.2s ease',
+    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+    position: 'relative',
+    overflow: 'hidden',
     '&:hover': {
-      backgroundColor: theme.colors.primary + 'dd',
+      backgroundColor: theme.colors.primary + 'ee',
+      transform: 'translateY(-2px)',
+      boxShadow: '0 4px 12px rgba(59, 130, 246, 0.2)',
     },
+    '&:active': {
+      transform: 'translateY(0)',
+    },
+    '&::after': {
+      content: '""',
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      width: 0,
+      height: 0,
+      backgroundColor: 'rgba(255, 255, 255, 0.2)',
+      borderRadius: '50%',
+      transform: 'translate(-50%, -50%)',
+      transition: 'width 0.3s ease, height 0.3s ease',
+    },
+    '&:active::after': {
+      width: '200px',
+      height: '200px',
+    }
   },
 };
 
