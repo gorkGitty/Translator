@@ -4,11 +4,11 @@ import Login from './components/Login';
 import Translate from './components/Translate';
 import History from './components/History';
 import Home from './components/Home';
-import VoiceTranslation from './components/VoiceTranslation'; // Importing new components
+import VoiceTranslation from './components/VoiceTranslation';
 import ImageTranslation from './components/ImageTranslation';
-import SignLanguageDetection from './components/ SignLanguageDetection';
+import SignLanguageDetection from './components/SignLanguageDetection';
 import { auth } from './firebase';
-import NavigationBar from './components/Navbar'; // Ensure this import is correct
+import NavigationBar from './components/Navbar';
 
 function App() {
   // Authentication state management
@@ -28,7 +28,7 @@ function App() {
   };
 
   return (
-    <Router>
+    <Router basename={process.env.PUBLIC_URL}>
       <div className="App">
         {user ? (
           <>
@@ -37,9 +37,9 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/translate" element={<Translate user={user} />} />
               <Route path="/history" element={<History user={user} />} />
-              <Route path="/voice-translation" element={<VoiceTranslation user={user} />} /> {/* New route for voice translation */}
-              <Route path="/image-translation" element={<ImageTranslation user={user} />} /> {/* New route for image translation */}
-              <Route path="/sign-language" element={<SignLanguageDetection />} /> {/* New route for sign language detection */}
+              <Route path="/voice-translation" element={<VoiceTranslation user={user} />} />
+              <Route path="/image-translation" element={<ImageTranslation user={user} />} />
+              <Route path="/sign-language" element={<SignLanguageDetection />} />
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>
           </>
