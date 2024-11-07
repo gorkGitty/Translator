@@ -1,18 +1,45 @@
 // Navbar.js
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import theme from '../styles/theme';
+import { TranslateOutlined, MicOutlined, ImageOutlined, HistoryOutlined, Logout } from '@mui/icons-material';
 
-const Navbar = () => {
+const Navbar = ({ onLogout }) => {
+  const location = useLocation();
+
+  const isActive = (path) => location.pathname === path;
+
+  const NavLink = ({ to, icon, label }) => (
+    <Link
+      to={to}
+      style={{
+        ...styles.link,
+        ...(isActive(to) && styles.activeLink),
+      }}
+    >
+      {icon}
+      <span style={styles.linkText}>{label}</span>
+    </Link>
+  );
+
   return (
     <nav style={styles.navbar}>
-      <div style={styles.logo}>Translator</div>
-      <div style={styles.navLinks}>
-        <Link style={styles.link} to="/">Home</Link>
-        <Link style={styles.link} to="/translate">Translate</Link>
-        <Link style={styles.link} to="/history">History</Link>
-        <Link style={styles.link} to="/voice-translation">Voice Translation</Link>
-        <Link style={styles.link} to="/image-translation">Image Translation</Link>
-        <Link style={styles.link} to="/sign-language">Sign Language Detection</Link>
+      <div style={styles.content}>
+        <Link to="/" style={styles.logo}>
+          Translator
+        </Link>
+        <div style={styles.rightSection}>
+          <div style={styles.links}>
+            <NavLink to="/translate" icon={<TranslateOutlined />} label="Text" />
+            <NavLink to="/voice-translation" icon={<MicOutlined />} label="Voice" />
+            <NavLink to="/image-translation" icon={<ImageOutlined />} label="Image" />
+            <NavLink to="/history" icon={<HistoryOutlined />} label="History" />
+          </div>
+          <button onClick={onLogout} style={styles.logoutButton}>
+            <Logout style={styles.logoutIcon} />
+            <span>Logout</span>
+          </button>
+        </div>
       </div>
     </nav>
   );
@@ -20,30 +47,75 @@ const Navbar = () => {
 
 const styles = {
   navbar: {
+    backgroundColor: theme.colors.surface,
+    boxShadow: theme.shadows.sm,
+    position: 'sticky',
+    top: 0,
+    zIndex: 100,
+    borderBottom: `1px solid ${theme.colors.border}`,
+  },
+  content: {
+    maxWidth: '1200px',
+    margin: '0 auto',
+    padding: `${theme.spacing.md} ${theme.spacing.xl}`,
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: '15px 20px',
-    backgroundColor: '#4A90E2',
-    color: '#FFFFFF',
-    boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)', // Added shadow for depth
   },
   logo: {
-    fontSize: '28px',
-    fontWeight: 'bold',
-    letterSpacing: '1px', // Slightly increase spacing between letters
+    fontSize: theme.typography.sizes.xl,
+    fontWeight: '600',
+    color: theme.colors.primary,
+    textDecoration: 'none',
+    letterSpacing: '-0.025em',
   },
-  navLinks: {
+  rightSection: {
     display: 'flex',
-    gap: '20px',
+    alignItems: 'center',
+    gap: theme.spacing.xl,
+  },
+  links: {
+    display: 'flex',
+    gap: theme.spacing.lg,
   },
   link: {
-    color: '#FFFFFF',
+    display: 'flex',
+    alignItems: 'center',
+    gap: theme.spacing.sm,
+    color: theme.colors.text.secondary,
     textDecoration: 'none',
-    fontSize: '16px',
-    padding: '8px 12px', // Added padding for a button-like feel
-    borderRadius: '5px', // Rounded corners
-    transition: 'background-color 0.3s, transform 0.3s', // Smooth transition for hover effects
+    padding: `${theme.spacing.sm} ${theme.spacing.md}`,
+    borderRadius: theme.borderRadius.md,
+    transition: 'all 0.2s ease',
+    fontSize: theme.typography.sizes.sm,
+  },
+  activeLink: {
+    backgroundColor: `${theme.colors.primary}10`,
+    color: theme.colors.primary,
+  },
+  linkText: {
+    marginLeft: theme.spacing.xs,
+  },
+  logoutButton: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: theme.spacing.sm,
+    padding: `${theme.spacing.sm} ${theme.spacing.md}`,
+    backgroundColor: 'transparent',
+    color: theme.colors.text.secondary,
+    border: `1px solid ${theme.colors.border}`,
+    borderRadius: theme.borderRadius.md,
+    cursor: 'pointer',
+    transition: 'all 0.2s ease',
+    fontSize: theme.typography.sizes.sm,
+    '&:hover': {
+      backgroundColor: '#fee2e2',
+      borderColor: '#ef4444',
+      color: '#ef4444',
+    },
+  },
+  logoutIcon: {
+    fontSize: '20px',
   },
 };
 

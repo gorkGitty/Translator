@@ -1,7 +1,9 @@
 // src/components/History.js
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { collection, query, where, orderBy, limit, getDocs } from 'firebase/firestore';
 import { db } from '../firebase';
+import theme from '../styles/theme';
+import { AccessTime, SwapHoriz } from '@mui/icons-material';
 
 const History = ({ user }) => {
   const [history, setHistory] = useState([]);
@@ -38,33 +40,37 @@ const History = ({ user }) => {
     fetchHistory();
   }, [user]);
 
-  if (loading) {
-    return (
-      <div style={styles.container}>
-        <div style={styles.loading}>Loading history...</div>
-      </div>
-    );
-  }
-
   return (
     <div style={styles.container}>
       <h2 style={styles.title}>Translation History</h2>
-      {history.length === 0 ? (
-        <p style={styles.emptyMessage}>No translations yet</p>
+      
+      {loading ? (
+        <div style={styles.loading}>Loading history...</div>
+      ) : history.length === 0 ? (
+        <div style={styles.emptyState}>No translation history yet</div>
       ) : (
         <div style={styles.historyList}>
           {history.map((item) => (
             <div key={item.id} style={styles.historyItem}>
-              <div style={styles.timestamp}>
-                {item.timestamp ? item.timestamp.toLocaleString() : 'Date not available'}
-              </div>
-              <div style={styles.translationDetails}>
-                <div style={styles.languagePair}>
-                  {item.fromLanguage} → {item.toLanguage}
+              <div style={styles.itemHeader}>
+                <div style={styles.timestamp}>
+                  <AccessTime style={styles.icon} />
+                  {item.timestamp ? item.timestamp.toLocaleString() : 'Date not available'}
                 </div>
-                <div style={styles.text}>
-                  <p><strong>Original:</strong> {item.original}</p>
-                  <p><strong>Translated:</strong> {item.translated}</p>
+                <div style={styles.languagePair}>
+                  {item.fromLanguage}
+                  <SwapHoriz style={styles.icon} />
+                  {item.toLanguage}
+                </div>
+              </div>
+              <div style={styles.translationContent}>
+                <div style={styles.textBlock}>
+                  <div style={styles.label}>Original</div>
+                  <div style={styles.text}>{item.original}</div>
+                </div>
+                <div style={styles.textBlock}>
+                  <div style={styles.label}>Translated</div>
+                  <div style={styles.text}>{item.translated}</div>
                 </div>
               </div>
             </div>
@@ -77,56 +83,92 @@ const History = ({ user }) => {
 
 const styles = {
   container: {
-    padding: '20px',
-    maxWidth: '800px',
+    padding: theme.spacing.xl,
+    maxWidth: '1000px',
     margin: '0 auto',
   },
   title: {
+    fontSize: theme.typography.sizes['2xl'],
+    fontWeight: '600',
+    color: theme.colors.text.primary,
+    marginBottom: theme.spacing.xl,
     textAlign: 'center',
-    color: '#333',
-    marginBottom: '30px',
   },
   loading: {
     textAlign: 'center',
-    color: '#666',
-    padding: '20px',
+    color: theme.colors.text.secondary,
+    padding: theme.spacing.xl,
+  },
+  emptyState: {
+    textAlign: 'center',
+    color: theme.colors.text.secondary,
+    padding: theme.spacing.xl,
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.borderRadius.lg,
+    border: `1px solid ${theme.colors.border}`,
   },
   historyList: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '20px',
+    gap: theme.spacing.lg,
   },
   historyItem: {
-    backgroundColor: '#fff',
-    borderRadius: '8px',
-    padding: '15px',
-    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.borderRadius.lg,
+    border: `1px solid ${theme.colors.border}`,
+    overflow: 'hidden',
+    transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+    '&:hover': {
+      transform: 'translateY(-2px)',
+      boxShadow: theme.shadows.md,
+    },
+  },
+  itemHeader: {
+    padding: theme.spacing.lg,
+    backgroundColor: theme.colors.background,
+    borderBottom: `1px solid ${theme.colors.border}`,
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   timestamp: {
-    fontSize: '0.9em',
-    color: '#666',
-    marginBottom: '10px',
-  },
-  translationDetails: {
     display: 'flex',
-    flexDirection: 'column',
-    gap: '10px',
+    alignItems: 'center',
+    gap: theme.spacing.sm,
+    color: theme.colors.text.secondary,
+    fontSize: theme.typography.sizes.sm,
   },
   languagePair: {
-    fontSize: '0.9em',
-    color: '#4A90E2',
-    fontWeight: 'bold',
+    display: 'flex',
+    alignItems: 'center',
+    gap: theme.spacing.sm,
+    color: theme.colors.primary,
+    fontWeight: '500',
   },
-  text: {
+  icon: {
+    fontSize: '1.2em',
+  },
+  translationContent: {
+    padding: theme.spacing.lg,
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gap: theme.spacing.xl,
+  },
+  textBlock: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '8px',
+    gap: theme.spacing.sm,
   },
-  emptyMessage: {
-    textAlign: 'center',
-    color: '#666',
-    fontStyle: 'italic',
-  }
+  label: {
+    fontSize: theme.typography.sizes.sm,
+    color: theme.colors.text.secondary,
+    fontWeight: '500',
+  },
+  text: {
+    fontSize: theme.typography.sizes.base,
+    color: theme.colors.text.primary,
+    lineHeight: '1.5',
+  },
 };
 
 export default History;

@@ -30,8 +30,7 @@ function App() {
       <div className="App">
         {user ? (
           <>
-            <NavigationBar />
-            <button onClick={handleLogout}>Logout</button>
+            <NavigationBar onLogout={handleLogout} />
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/translate" element={<Translate user={user} />} />
