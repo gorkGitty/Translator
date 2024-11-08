@@ -4,7 +4,7 @@ import { auth } from '../firebase';
 import theme from '../styles/theme';
 import { Email, Lock, Error } from '@mui/icons-material';
 
-function Login({ onLogin }) {
+function Login({ onLogin, onToggleForm }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -60,6 +60,12 @@ function Login({ onLogin }) {
           <button type="submit" style={styles.button}>
             Sign In
           </button>
+          <div style={styles.signupPrompt}>
+            <span>Don't have an account? </span>
+            <button onClick={() => onToggleForm('signup')} style={styles.textButton}>
+              Sign up
+            </button>
+          </div>
         </form>
       </div>
     </div>
@@ -151,6 +157,16 @@ const styles = {
   },
   errorIcon: {
     fontSize: '20px',
+  },
+  signupPrompt: {
+    display: 'flex',
+    justifyContent: 'center',
+    marginTop: theme.spacing.md,
+  },
+  textButton: {
+    color: theme.colors.primary,
+    textDecoration: 'none',
+    marginLeft: theme.spacing.sm,
   },
 };
 

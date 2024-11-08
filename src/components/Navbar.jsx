@@ -4,7 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 import theme from '../styles/theme';
 import { TranslateOutlined, MicOutlined, ImageOutlined, HistoryOutlined, Logout, SignLanguage } from '@mui/icons-material';
 
-const Navbar = ({ onLogout }) => {
+const Navbar = ({ onLogout, isGuest }) => {
   const location = useLocation();
 
   const isActive = (path) => location.pathname === path;
@@ -38,7 +38,7 @@ const Navbar = ({ onLogout }) => {
           </div>
           <button onClick={onLogout} style={styles.logoutButton}>
             <Logout style={styles.logoutIcon} />
-            <span>Logout</span>
+            <span>{isGuest ? 'Exit Guest Mode' : 'Logout'}</span>
           </button>
         </div>
       </div>

@@ -9,10 +9,12 @@ import ImageTranslation from './components/ImageTranslation';
 import SignLanguageDetection from './components/SignLanguageDetection';
 import { auth } from './firebase';
 import NavigationBar from './components/Navbar';
+import Signup from './components/Signup';
 
 function App() {
   // Authentication state management
   const [user, setUser] = useState(null);
+  const [authForm, setAuthForm] = useState('login'); // 'login' or 'signup'
 
   // Listen for authentication state changes
   useEffect(() => {
@@ -27,12 +29,16 @@ function App() {
     auth.signOut();
   };
 
+  const toggleAuthForm = (form) => {
+    setAuthForm(form);
+  };
+
   return (
     <Router basename={process.env.PUBLIC_URL}>
       <div className="App">
         {user ? (
           <>
-            <NavigationBar onLogout={handleLogout} />
+            <NavigationBar onLogout={handleLogout} isGuest={user.isAnonymous} />
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/translate" element={<Translate user={user} />} />
@@ -44,7 +50,11 @@ function App() {
             </Routes>
           </>
         ) : (
-          <Login onLogin={setUser} />
+          authForm === 'login' ? (
+            <Login onLogin={setUser} onToggleForm={toggleAuthForm} />
+          ) : (
+            <Signup onSignup={setUser} onToggleForm={toggleAuthForm} />
+          )
         )}
       </div>
     </Router>
