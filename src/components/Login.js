@@ -80,6 +80,7 @@ const styles = {
     justifyContent: 'center',
     padding: theme.spacing.xl,
     backgroundColor: theme.colors.background,
+    animation: 'fadeIn 0.5s ease forwards',
   },
   card: {
     width: '100%',
@@ -88,6 +89,7 @@ const styles = {
     borderRadius: theme.borderRadius.lg,
     boxShadow: theme.shadows.lg,
     padding: theme.spacing.xxl,
+    animation: 'slideUp 0.5s ease forwards',
   },
   title: {
     fontSize: theme.typography.sizes['2xl'],
@@ -109,6 +111,8 @@ const styles = {
   },
   inputGroup: {
     position: 'relative',
+    animation: 'slideRight 0.5s ease forwards',
+    animationDelay: 'calc(var(--index) * 100ms)',
   },
   inputIcon: {
     position: 'absolute',
@@ -140,9 +144,12 @@ const styles = {
     fontSize: theme.typography.sizes.base,
     fontWeight: '500',
     cursor: 'pointer',
-    transition: 'background-color 0.2s ease',
+    transition: 'all 0.2s ease',
+    animation: 'slideUp 0.5s ease forwards',
+    animationDelay: '0.2s',
     '&:hover': {
       backgroundColor: theme.colors.primary + 'dd',
+      transform: 'translateY(-1px)',
     },
   },
   error: {
@@ -161,12 +168,24 @@ const styles = {
   signupPrompt: {
     display: 'flex',
     justifyContent: 'center',
+    alignItems: 'center',
+    gap: theme.spacing.sm,
     marginTop: theme.spacing.md,
+    animation: 'fadeIn 0.5s ease forwards',
+    animationDelay: '0.4s',
   },
   textButton: {
+    background: 'none',
+    border: 'none',
     color: theme.colors.primary,
-    textDecoration: 'none',
-    marginLeft: theme.spacing.sm,
+    cursor: 'pointer',
+    fontSize: theme.typography.sizes.base,
+    padding: 0,
+    transition: 'color 0.2s ease',
+    '&:hover': {
+      color: theme.colors.primary + 'dd',
+      textDecoration: 'underline',
+    },
   },
 };
 
