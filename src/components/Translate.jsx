@@ -110,13 +110,14 @@ const styles = {
     padding: theme.spacing.xl,
     maxWidth: '1200px',
     margin: '0 auto',
+    animation: 'fadeIn 0.5s ease forwards',
   },
   translationCard: {
     backgroundColor: theme.colors.surface,
     borderRadius: theme.borderRadius.lg,
     boxShadow: theme.shadows.md,
     padding: theme.spacing.xl,
-    border: `1px solid ${theme.colors.border}`,
+    animation: 'slideUp 0.5s ease forwards',
   },
   languageBar: {
     display: 'flex',
@@ -176,6 +177,8 @@ const styles = {
     '&:focus': {
       borderColor: theme.colors.primary,
     },
+    animation: 'slideRight 0.5s ease forwards',
+    animationDelay: 'calc(var(--index) * 100ms)',
   },
   divider: {
     backgroundColor: theme.colors.border,
@@ -203,7 +206,7 @@ const styles = {
     position: 'relative',
     overflow: 'hidden',
     '&:hover': {
-      backgroundColor: theme.colors.primary + 'ee',
+      backgroundColor: theme.colors.primary + 'dd',
       transform: 'translateY(-2px)',
       boxShadow: '0 4px 12px rgba(59, 130, 246, 0.2)',
     },
@@ -225,7 +228,9 @@ const styles = {
     '&:active::after': {
       width: '200px',
       height: '200px',
-    }
+    },
+    animation: 'scaleIn 0.5s ease forwards',
+    animationDelay: '0.3s',
   },
 };
 

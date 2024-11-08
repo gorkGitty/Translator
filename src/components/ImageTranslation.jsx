@@ -129,6 +129,7 @@ const styles = {
     padding: theme.spacing.xl,
     maxWidth: '800px',
     margin: '0 auto',
+    animation: 'fadeIn 0.5s ease forwards',
   },
   card: {
     backgroundColor: theme.colors.surface,
@@ -172,6 +173,7 @@ const styles = {
   },
   uploadSection: {
     marginBottom: theme.spacing.xl,
+    animation: 'slideUp 0.5s ease forwards',
   },
   fileInput: {
     display: 'none',
@@ -250,6 +252,10 @@ const styles = {
     color: theme.colors.text.primary,
     lineHeight: '1.5',
   },
+  imagePreview: {
+    animation: 'scaleIn 0.5s ease forwards',
+    animationDelay: '0.2s',
+  }
 };
 
 export default ImageTranslation;

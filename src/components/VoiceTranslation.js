@@ -281,6 +281,11 @@ const styles = {
     fontSize: theme.typography.sizes.base,
     cursor: 'pointer',
     transition: 'all 0.2s ease',
+    animation: 'scaleIn 0.5s ease forwards',
+    '&:hover': {
+      transform: 'translateY(-2px)',
+      backgroundColor: theme.colors.primary + 'dd',
+    },
   },
   recordingActive: {
     backgroundColor: theme.colors.error,
@@ -298,6 +303,8 @@ const styles = {
     backgroundColor: theme.colors.background,
     borderRadius: theme.borderRadius.lg,
     border: `1px solid ${theme.colors.border}`,
+    animation: 'slideUp 0.5s ease forwards',
+    animationDelay: 'calc(var(--index) * 100ms)',
   },
   resultTitle: {
     fontSize: theme.typography.sizes.lg,

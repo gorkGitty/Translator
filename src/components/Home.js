@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Translate, Mic, Image, SignLanguage } from '@mui/icons-material';
 import theme from '../styles/theme';
+import '../styles/Home.css';
 
 function Home() {
   const navigate = useNavigate();
@@ -10,25 +11,25 @@ function Home() {
     {
       title: 'Text Translation',
       description: 'Translate text between multiple languages instantly',
-      icon: <Translate style={styles.featureIcon} />,
+      icon: <Translate className="feature-icon" />,
       path: '/translate'
     },
     {
       title: 'Voice Translation',
       description: 'Speak and get real-time translations',
-      icon: <Mic style={styles.featureIcon} />,
+      icon: <Mic className="feature-icon" />,
       path: '/voice-translation'
     },
     {
       title: 'Image Translation',
       description: 'Extract and translate text from images',
-      icon: <Image style={styles.featureIcon} />,
+      icon: <Image className="feature-icon" />,
       path: '/image-translation'
     },
     {
       title: 'Sign Language',
       description: 'Translate sign language in real-time',
-      icon: <SignLanguage style={styles.featureIcon} />,
+      icon: <SignLanguage className="feature-icon" />,
       path: '/sign-language'
     }
   ];
@@ -42,16 +43,17 @@ function Home() {
         </p>
       </div>
 
-      <div style={styles.featuresGrid}>
-        {features.map((feature) => (
+      <div className="features-grid">
+        {features.map((feature, index) => (
           <div
             key={feature.title}
-            style={styles.featureCard}
+            className="feature-card"
             onClick={() => navigate(feature.path)}
+            style={{ animationDelay: `${index * 100}ms` }}
           >
             {feature.icon}
-            <h3 style={styles.featureTitle}>{feature.title}</h3>
-            <p style={styles.featureDescription}>{feature.description}</p>
+            <h3 className="feature-title">{feature.title}</h3>
+            <p className="feature-description">{feature.description}</p>
           </div>
         ))}
       </div>
@@ -81,52 +83,6 @@ const styles = {
     color: theme.colors.text.secondary,
     maxWidth: '600px',
     margin: '0 auto',
-  },
-  featuresGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-    gap: theme.spacing.xl,
-    padding: theme.spacing.lg,
-  },
-  featureCard: {
-    backgroundColor: theme.colors.surface,
-    padding: theme.spacing.xl,
-    borderRadius: theme.borderRadius.lg,
-    border: `1px solid ${theme.colors.border}`,
-    cursor: 'pointer',
-    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-    textAlign: 'center',
-    animation: 'fadeIn 0.5s ease forwards',
-    animationDelay: 'calc(var(--index) * 100ms)',
-    opacity: 0,
-    '&:hover': {
-      transform: 'translateY(-8px)',
-      boxShadow: theme.shadows.md,
-      borderColor: theme.colors.primary,
-      '& svg': {
-        transform: 'scale(1.1)',
-        color: theme.colors.primary,
-      }
-    },
-    '& svg': {
-      transition: 'all 0.3s ease',
-    }
-  },
-  featureIcon: {
-    fontSize: '48px',
-    color: theme.colors.primary,
-    marginBottom: theme.spacing.md,
-  },
-  featureTitle: {
-    fontSize: theme.typography.sizes.lg,
-    fontWeight: '600',
-    color: theme.colors.text.primary,
-    marginBottom: theme.spacing.sm,
-  },
-  featureDescription: {
-    fontSize: theme.typography.sizes.base,
-    color: theme.colors.text.secondary,
-    lineHeight: '1.5',
   },
 };
 
