@@ -1,6 +1,6 @@
 {
-  "name": "your-app-name",
-  "homepage": "https://yourusername.github.io/repository-name",
+  "name": "Translator",
+  "homepage": "https://gorkgitty.github.io/Translator",
   "version": "1.0.0",
   "private": true,
   "dependencies": {
@@ -47,5 +47,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "gh-pages": "^6.2.0"
   }
 }
