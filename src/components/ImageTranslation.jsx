@@ -61,7 +61,7 @@ const ImageTranslation = ({ user }) => {
   return (
     <div style={styles.container}>
       <div style={styles.card}>
-        <h2 style={styles.title}>Image Translation</h2>
+        <h1 style={styles.title}>GlobeTalk Image Translation</h1>
         
         <div style={styles.languageSelector}>
           <label style={styles.label}>Translate to:</label>

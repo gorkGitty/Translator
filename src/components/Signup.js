@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { createUserWithEmailAndPassword, signInAnonymously } from 'firebase/auth';
-import { auth } from '../firebase';
-import theme from '../styles/theme';
+import { auth } from '../firebase.js';
+import theme from '../styles/theme.js';
 import { Email, Lock, Error, Person } from '@mui/icons-material';
 
 function Signup({ onSignup, onToggleForm }) {

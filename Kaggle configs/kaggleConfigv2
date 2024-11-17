@@ -1,0 +1,204 @@
+import tensorflow as tf
+import numpy as np
+import os
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout
+from tensorflow.keras.callbacks import ModelCheckpoint
+import time
+import kaggle
+from datetime import datetime
+import json
+from kaggle.api.kaggle_api_extended import KaggleApi
+import shutil
+import subprocess
+
+# Define paths
+dataset_path = '/kaggle/input/dataset/dataset'
+
+# Image data generator for preprocessing
+datagen = ImageDataGenerator(
+    rescale=1./255,
+    validation_split=0.2
+)
+
+# Load training data
+train_generator = datagen.flow_from_directory(
+    dataset_path,
+    target_size=(224, 224),
+    batch_size=32,
+    class_mode='categorical',
+    subset='training'
+)
+
+# Load validation data
+validation_generator = datagen.flow_from_directory(
+    dataset_path,
+    target_size=(224, 224),
+    batch_size=32,
+    class_mode='categorical',
+    subset='validation'
+)
+
+from tensorflow.keras.layers import Input
+
+def create_model():
+    model = Sequential()
+    
+    # Use Input layer to define input shape
+    model.add(Input(shape=(224, 224, 3)))
+    
+    # Convolutional layers
+    model.add(Conv2D(32, (3, 3), activation='relu'))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    
+    model.add(Conv2D(64, (3, 3), activation='relu'))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    
+    model.add(Conv2D(64, (3, 3), activation='relu'))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    
+    # Flatten and dense layers
+    model.add(Flatten())
+    model.add(Dense(128, activation='relu'))
+    model.add(Dropout(0.3))
+    model.add(Dense(64, activation='relu'))
+    model.add(Dropout(0.2))
+    
+    # Output layer
+    model.add(Dense(26, activation='softmax'))
+    
+    return model
+
+    # Create and compile the model
+model = create_model()
+model.compile(optimizer=tf.keras.optimizers.Adam(0.0001),
+              loss='categorical_crossentropy',
+              metrics=['accuracy'])
+
+class TrainingMonitor(tf.keras.callbacks.Callback):
+    def __init__(self):
+        super(TrainingMonitor, self).__init__()
+        self.start_time = None
+        
+    def on_train_begin(self, logs=None):
+        self.start_time = time.time()
+        print("\nStarting training...")
+        print(f"Training samples: {self.model.train_generator.samples}")
+        print(f"Validation samples: {self.model.validation_generator.samples}")
+        print("=" * 50)
+        
+    def on_epoch_begin(self, epoch, logs=None):
+        print(f"\nEpoch {epoch + 1}/{self.params['epochs']}")
+        
+    def on_epoch_end(self, epoch, logs=None):
+        epoch_time = time.time() - self.start_time
+        print(f"Time elapsed: {epoch_time:.2f}s")
+        print(f"Training loss: {logs['loss']:.4f}")
+        print(f"Training accuracy: {logs['accuracy']:.4f}")
+        print(f"Validation loss: {logs['val_loss']:.4f}")
+        print(f"Validation accuracy: {logs['val_accuracy']:.4f}")
+        print("-" * 50)
+        
+    def on_train_end(self, logs=None):
+        total_time = time.time() - self.start_time
+        print("\nTraining completed!")
+        print(f"Total training time: {total_time:.2f}s")
+        print("=" * 50)
+
+class AutoSaver(tf.keras.callbacks.Callback):
+    def __init__(self, dataset_name="prinshthapa/asl-model-saves"):
+        super(AutoSaver, self).__init__()
+        self.dataset_name = dataset_name
+        self.dataset_created = False
+        
+        # Initialize Kaggle API
+        self.api = KaggleApi()
+        try:
+            self.api.authenticate()
+            print("Kaggle API authenticated successfully!")
+        except Exception as e:
+            print(f"Kaggle API authentication error: {str(e)}")
+            raise
+        
+    def on_epoch_end(self, epoch, logs=None):
+        if (epoch + 1) % 5 == 0:  # Save every 5 epochs
+            self._save_checkpoint(f"epoch_{epoch+1}")
+            
+    def on_train_end(self, logs=None):
+        self._save_checkpoint("final")
+            
+    def _save_checkpoint(self, checkpoint_name):
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        temp_dir = f'/kaggle/working/model_export_{timestamp}'
+        os.makedirs(temp_dir, exist_ok=True)
+        
+        # Save model
+        model_path = f'{temp_dir}/asl_model.keras'
+        self.model.save(model_path)
+        
+        # Save training history
+        if hasattr(self.model, 'history'):
+            with open(f'{temp_dir}/training_history.json', 'w') as f:
+                json.dump(self.model.history.history, f)
+        
+        # Create dataset metadata
+        metadata = {
+            "title": "ASL Model Training Checkpoints",
+            "id": self.dataset_name,
+            "licenses": [{"name": "CC0-1.0"}]
+        }
+        
+        with open(f'{temp_dir}/dataset-metadata.json', 'w') as f:
+            json.dump(metadata, f)
+            
+        try:
+            if not self.dataset_created:
+                # Create new dataset for first save
+                print("Creating new dataset...")
+                self.api.dataset_create_new(
+                    folder=temp_dir,
+                    public=False,
+                    quiet=False
+                )
+                self.dataset_created = True
+                print(f"Dataset created: {self.dataset_name}")
+            else:
+                # Update existing dataset
+                print("Updating dataset...")
+                self.api.dataset_create_version(
+                    folder=temp_dir,
+                    version_notes=f"Checkpoint: {checkpoint_name} at {timestamp}",
+                    quiet=False
+                )
+            print(f"\nSuccessfully saved checkpoint: {checkpoint_name}")
+            print(f"Dataset: https://www.kaggle.com/datasets/{self.dataset_name}")
+            
+        except Exception as e:
+            print(f"\nError saving to Kaggle dataset: {str(e)}")
+            # Fallback save to working directory
+            fallback_dir = '/kaggle/working/backup_checkpoints'
+            os.makedirs(fallback_dir, exist_ok=True)
+            backup_path = f'{fallback_dir}/model_{checkpoint_name}_{timestamp}.keras'
+            self.model.save(backup_path)
+            print(f"Model saved to fallback location: {backup_path}")
+
+# Modify your model.fit to include the generators as model attributes
+model.train_generator = train_generator
+model.validation_generator = validation_generator
+
+# Create callbacks
+monitor = TrainingMonitor()
+auto_saver = AutoSaver("prinshthapa/asl-model-saves")
+
+# Train the model
+try:
+    history = model.fit(
+        train_generator,
+        epochs=30,
+        validation_data=validation_generator,
+        callbacks=[monitor, auto_saver]
+    )
+except Exception as e:
+    print(f"Training interrupted: {str(e)}")
+    auto_saver._save_checkpoint("interrupted")

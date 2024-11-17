@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import Login from './components/Login';
-import Translate from './components/Translate';
-import History from './components/History';
-import Home from './components/Home';
-import VoiceTranslation from './components/VoiceTranslation';
-import ImageTranslation from './components/ImageTranslation';
-import SignLanguageDetection from './components/SignLanguageDetection';
-import { auth } from './firebase';
-import NavigationBar from './components/Navbar';
-import Signup from './components/Signup';
+import Login from './components/Login.js';
+import Translate from './components/Translate.jsx';
+import History from './components/History.jsx';
+import Home from './components/Home.js';
+import VoiceTranslation from './components/VoiceTranslation.js';
+import ImageTranslation from './components/ImageTranslation.jsx';
+import SignLanguageDetectionTemp from './components/SignLanguageDetection.jsx';
+import { auth } from './firebase.js';
+import NavigationBar from './components/Navbar.jsx';
+import Signup from './components/Signup.js';
 
 function App() {
   // Authentication state management
@@ -45,7 +45,7 @@ function App() {
               <Route path="/history" element={<History user={user} />} />
               <Route path="/voice-translation" element={<VoiceTranslation user={user} />} />
               <Route path="/image-translation" element={<ImageTranslation user={user} />} />
-              <Route path="/sign-language" element={<SignLanguageDetection />} />
+              <Route path="/sign-language" element={<SignLanguageDetectionTemp />} />
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>
           </>

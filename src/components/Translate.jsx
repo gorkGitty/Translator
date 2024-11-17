@@ -45,6 +45,7 @@ const Translate = ({ user }) => {
   return (
     <div style={styles.container}>
       <div style={styles.translationCard}>
+        <h1 style={styles.title}>GlobeTalk Text Translation</h1>
         <div style={styles.languageBar}>
           <select 
             value={fromLanguage} 

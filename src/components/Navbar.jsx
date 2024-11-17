@@ -2,14 +2,14 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import theme from '../styles/theme';
-import { TranslateOutlined, MicOutlined, ImageOutlined, HistoryOutlined, Logout, SignLanguage } from '@mui/icons-material';
+import { TranslateOutlined, MicOutlined, ImageOutlined, HistoryOutlined, Logout, SignLanguage, Public } from '@mui/icons-material';
 
 const Navbar = ({ onLogout, isGuest }) => {
   const location = useLocation();
 
   const isActive = (path) => location.pathname === path;
 
-  const NavLink = ({ to, icon, label }) => (
+  const NavLink = ({ to, icon, label, isBeta }) => (
     <Link
       to={to}
       style={{
@@ -18,7 +18,10 @@ const Navbar = ({ onLogout, isGuest }) => {
       }}
     >
       {icon}
-      <span style={styles.linkText}>{label}</span>
+      <span style={styles.linkText}>
+        {label}
+        {isBeta && <span style={styles.betaBadge}>BETA</span>}
+      </span>
     </Link>
   );
 
@@ -26,14 +29,15 @@ const Navbar = ({ onLogout, isGuest }) => {
     <nav style={styles.navbar}>
       <div style={styles.content}>
         <Link to="/" style={styles.logo}>
-          Translator
+          <Public style={styles.logoIcon} />
+          <span style={styles.logoText}>GlobeTalk</span>
         </Link>
         <div style={styles.rightSection}>
           <div style={styles.links}>
             <NavLink to="/translate" icon={<TranslateOutlined />} label="Text" />
             <NavLink to="/voice-translation" icon={<MicOutlined />} label="Voice" />
             <NavLink to="/image-translation" icon={<ImageOutlined />} label="Image" />
-            <NavLink to="/sign-language" icon={<SignLanguage />} label="Sign" />
+            <NavLink to="/sign-language" icon={<SignLanguage />} label="Sign" isBeta={true} />
             <NavLink to="/history" icon={<HistoryOutlined />} label="History" />
           </div>
           <button onClick={onLogout} style={styles.logoutButton}>
@@ -65,10 +69,22 @@ const styles = {
   },
   logo: {
     fontSize: theme.typography.sizes.xl,
-    fontWeight: '600',
+    fontWeight: '700',
     color: theme.colors.primary,
     textDecoration: 'none',
     letterSpacing: '-0.025em',
+    display: 'flex',
+    alignItems: 'center',
+    gap: theme.spacing.xs,
+  },
+  logoIcon: {
+    fontSize: '24px',
+    color: theme.colors.primary,
+  },
+  logoText: {
+    background: `linear-gradient(135deg, ${theme.colors.primary}, #2563eb)`,
+    WebkitBackgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
   },
   rightSection: {
     display: 'flex',
@@ -112,6 +128,8 @@ const styles = {
   },
   linkText: {
     marginLeft: theme.spacing.xs,
+    display: 'flex',
+    alignItems: 'center',
   },
   logoutButton: {
     display: 'flex',
@@ -133,6 +151,21 @@ const styles = {
   },
   logoutIcon: {
     fontSize: '20px',
+  },
+  betaBadge: {
+    backgroundColor: '#FF4081',
+    color: 'white',
+    padding: '2px 6px',
+    borderRadius: '4px',
+    fontSize: '10px',
+    fontWeight: 'bold',
+    marginLeft: '6px',
+    textTransform: 'uppercase',
+    letterSpacing: '0.5px',
+    display: 'inline-block',
+    lineHeight: '1.2',
+    verticalAlign: 'middle',
+    boxShadow: '0 2px 4px rgba(255, 64, 129, 0.2)',
   },
 };
 

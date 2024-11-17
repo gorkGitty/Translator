@@ -1,12 +1,12 @@
 // VoiceTranslation.js
 import React, { useState, useRef } from 'react';
-import { translateText } from '../api';
-import theme from '../styles/theme';
+import { translateText } from '../api.jsx';
+import theme from '../styles/theme.js';
 import { Mic, Stop, VolumeUp, Language } from '@mui/icons-material';
 import languagesData from '../languages.json';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
-import { auth } from '../firebase';
-import { db } from '../firebase';
+import { auth } from '../firebase.js';
+import { db } from '../firebase.js';
 
 const VoiceTranslation = ({ user }) => {
   const [isRecording, setIsRecording] = useState(false);
@@ -128,7 +128,7 @@ const VoiceTranslation = ({ user }) => {
   return (
     <div style={styles.container}>
       <div style={styles.translationCard}>
-        <h2 style={styles.title}>Voice Translation</h2>
+        <h1 style={styles.title}>GlobeTalk Voice Translation</h1>
 
         <div style={styles.languageSelector}>
           <div style={styles.languageBar}>

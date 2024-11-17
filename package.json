@@ -3,16 +3,22 @@
   "homepage": "https://gorkgitty.github.io/Translator",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "dependencies": {
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
-    "@mui/icons-material": "^6.1.5",
-    "@mui/material": "^6.1.5",
+    "@mediapipe/camera_utils": "^0.3.1675466862",
+    "@mediapipe/hands": "^0.4.1675469240",
+    "@mui/icons-material": "^5.15.12",
+    "@mui/material": "^5.15.12",
+    "@tensorflow/tfjs": "^4.22.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.7.7",
+    "canvas": "^2.11.2",
     "firebase": "^11.0.1",
+    "jimp": "^0.22.12",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router": "^6.27.0",
@@ -28,7 +34,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "deploy": "gh-pages -d build",
+    "train": "node --max-old-space-size=8192 src/components/models/trainScript.mjs"
   },
   "eslintConfig": {
     "extends": [

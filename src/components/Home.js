@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Translate, Mic, Image, SignLanguage } from '@mui/icons-material';
-import theme from '../styles/theme';
+import theme from '../styles/theme.js';
 import '../styles/Home.css';
 
 function Home() {
