@@ -1,6 +1,8 @@
 // SignLanguageDetection.js
 import React, { useRef, useEffect, useState } from 'react';
 import * as tf from '@tensorflow/tfjs';
+import { SignLanguage } from '@mui/icons-material';
+import theme from '../styles/theme';
 
 const SignLanguageDetection = () => {
   const videoRef = useRef(null);
@@ -325,143 +327,205 @@ const SignLanguageDetection = () => {
 
   return (
     <div style={styles.container}>
-      <div style={styles.titleContainer}>
-        <h1 style={styles.title}>GlobeTalk Sign Language</h1>
-        <span style={styles.betaBadge}>BETA</span>
-      </div>
-      {showDisclaimer && (
-        <div style={styles.disclaimerOverlay}>
-          <div style={styles.disclaimerModal}>
-            <h3 style={styles.disclaimerTitle}>Beta Feature Disclaimer</h3>
-            <p style={styles.disclaimerText}>
-              This Sign Language Detection feature is currently in beta testing. The model is still being improved and may not generate the most accurate results. Please be aware that:
-            </p>
-            <ul style={styles.disclaimerList}>
-              <li>Translations may not be 100% accurate</li>
-              <li>The model works best in good lighting conditions</li>
-              <li>Some signs may not be recognized correctly</li>
-              <li>Performance may vary across different devices</li>
-            </ul>
-            <button 
-              onClick={() => setShowDisclaimer(false)}
-              style={styles.disclaimerButton}
-            >
-              I Understand
-            </button>
-          </div>
+      <div style={styles.card}>
+        <div style={styles.titleContainer}>
+          <SignLanguage style={styles.titleIcon} />
+          <h1 style={styles.title}>GlobeTalk Sign Language</h1>
+          <span style={styles.betaBadge}>BETA</span>
         </div>
-      )}
-      {isLoading && <div style={styles.loading}>Loading model...</div>}
-      {error && <div style={styles.error}>{error}</div>}
-      
-      <div style={styles.videoContainer}>
-        <video
-          ref={videoRef}
-          style={styles.video}
-          autoPlay
-          playsInline
-          muted
-        />
-        {!isStreaming && (
-          <div style={styles.placeholder}>
-            Waiting for camera...
+
+        {showDisclaimer && (
+          <div style={styles.disclaimerOverlay}>
+            <div style={styles.disclaimerModal}>
+              <h3 style={styles.disclaimerTitle}>Beta Feature Disclaimer</h3>
+              <p style={styles.disclaimerText}>
+                This Sign Language Detection feature is currently in beta testing. The model is still being improved and may not generate the most accurate results. Please be aware that:
+              </p>
+              <ul style={styles.disclaimerList}>
+                <li>Translations may not be 100% accurate</li>
+                <li>The model works best in good lighting conditions</li>
+                <li>Some signs may not be recognized correctly</li>
+                <li>Performance may vary across different devices</li>
+              </ul>
+              <button 
+                onClick={() => setShowDisclaimer(false)}
+                style={styles.disclaimerButton}
+                className="globetalk-button"
+              >
+                I Understand
+              </button>
+            </div>
           </div>
         )}
-        <canvas
-          ref={canvasRef}
-          style={styles.canvas}
-        />
-      </div>
 
-      <div style={styles.controls}>
-        <button 
-          onClick={isStreaming ? stopCamera : startCamera}
-          style={{
-            ...styles.controlButton,
-            backgroundColor: '#2196F3' // Blue color for stream button
-          }}
-        >
-          {isStreaming ? 'Stop Stream' : 'Start Stream'}
-        </button>
+        {isLoading && (
+          <div style={styles.loadingContainer}>
+            <div style={styles.loading}>Loading model...</div>
+          </div>
+        )}
         
-        {isStreaming && (
+        {error && (
+          <div style={styles.errorContainer}>
+            <div style={styles.error}>{error}</div>
+          </div>
+        )}
+        
+        <div style={styles.videoContainer}>
+          <video
+            ref={videoRef}
+            style={styles.video}
+            autoPlay
+            playsInline
+            muted
+          />
+          {!isStreaming && (
+            <div style={styles.placeholder}>
+              <SignLanguage style={styles.placeholderIcon} />
+              <span>Waiting for camera...</span>
+            </div>
+          )}
+          <canvas
+            ref={canvasRef}
+            style={styles.canvas}
+          />
+        </div>
+
+        <div style={styles.controls}>
           <button 
-            onClick={toggleDetection}
+            onClick={isStreaming ? stopCamera : startCamera}
             style={{
               ...styles.controlButton,
-              backgroundColor: detectionActive ? '#ff4444' : '#4CAF50'
+              backgroundColor: isStreaming ? '#ef4444' : theme.colors.primary
             }}
+            className="globetalk-button"
           >
-            {detectionActive ? 'Stop Detection' : 'Start Detection'}
+            {isStreaming ? 'Stop Stream' : 'Start Stream'}
           </button>
-        )}
-        
-        {detectionActive && (
-          <button
-            onClick={handleSpaceDetection}
-            style={{
-              ...styles.controlButton,
-              backgroundColor: '#FFA500'
-            }}
-          >
-            Add Space
-          </button>
-        )}
-      </div>
+          
+          {isStreaming && (
+            <button 
+              onClick={toggleDetection}
+              style={{
+                ...styles.controlButton,
+                backgroundColor: detectionActive ? '#ef4444' : '#4CAF50'
+              }}
+              className="globetalk-button"
+            >
+              {detectionActive ? 'Stop Detection' : 'Start Detection'}
+            </button>
+          )}
+          
+          {detectionActive && (
+            <button
+              onClick={handleSpaceDetection}
+              style={{
+                ...styles.controlButton,
+                backgroundColor: '#FFA500'
+              }}
+              className="globetalk-button"
+            >
+              Add Space
+            </button>
+          )}
+        </div>
 
-      {detectionActive && (
         <div style={styles.predictionContainer}>
           <div style={styles.predictionBox}>
-            <div style={styles.predictionHeader}>Current Word: {currentWord}</div>
-            <div style={styles.predictionInfo}>
-              <div>Detected Letter: {prediction || '-'}</div>
-              <div>Confidence: {confidence ? `${(confidence * 100).toFixed(1)}%` : '0%'}</div>
-              <div>Collection Status: {isCollectingPredictions ? 'Collecting' : 'Waiting'}</div>
-              <div>Samples: {predictionBuffer.length}</div>
-              <div>Time: {timeLeft}s</div>
-              <div>
-                Stability: {(predictionBuffer.length > 0 
-                  ? (new Set(predictionBuffer.map(p => p.letter)).size / predictionBuffer.length) 
-                  : 0).toFixed(2)}
-              </div>
+            <div style={styles.predictionHeader}>
+              Current Word: {detectionActive ? currentWord : '-'}
+            </div>
+            <div style={styles.predictionGrid}>
+              {!detectionActive ? (
+                <div style={styles.placeholderMessage}>
+                  Start detection to see metrics
+                </div>
+              ) : (
+                <>
+                  <div style={styles.predictionItem}>
+                    <span>Detected Letter:</span>
+                    <strong>{prediction || '-'}</strong>
+                  </div>
+                  <div style={styles.predictionItem}>
+                    <span>Confidence:</span>
+                    <strong>{confidence ? `${(confidence * 100).toFixed(1)}%` : '0%'}</strong>
+                  </div>
+                  <div style={styles.predictionItem}>
+                    <span>Collection Status:</span>
+                    <strong>{isCollectingPredictions ? 'Collecting' : 'Waiting'}</strong>
+                  </div>
+                  <div style={styles.predictionItem}>
+                    <span>Samples:</span>
+                    <strong>{predictionBuffer.length}</strong>
+                  </div>
+                  <div style={styles.predictionItem}>
+                    <span>Time Left:</span>
+                    <strong>{timeLeft}s</strong>
+                  </div>
+                  <div style={styles.predictionItem}>
+                    <span>Stability:</span>
+                    <strong>
+                      {(predictionBuffer.length > 0 
+                        ? (new Set(predictionBuffer.map(p => p.letter)).size / predictionBuffer.length) 
+                        : 0).toFixed(2)}
+                    </strong>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>
-      )}
 
-      {detectedText && (
-        <div style={styles.detectedText}>
-          <h3>Detected Text:</h3>
-          <p>{detectedText}</p>
-        </div>
-      )}
+        {detectedText && (
+          <div style={styles.resultContainer}>
+            <h3 style={styles.resultTitle}>Detected Text:</h3>
+            <p style={styles.resultText}>{detectedText}</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
 
 const styles = {
   container: {
-    padding: '20px',
-    backgroundColor: '#F5F5F5',
-    borderRadius: '8px',
-    boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
-    margin: '20px',
+    padding: theme.spacing.xl,
+    maxWidth: '1200px',
+    margin: '0 auto',
+    animation: 'fadeIn 0.5s ease forwards',
+    minHeight: '100vh',
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  card: {
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.borderRadius.lg,
+    boxShadow: theme.shadows.md,
+    padding: theme.spacing.xl,
+    animation: 'slideUp 0.5s ease forwards',
+    flex: 1,
   },
   titleContainer: {
     display: 'flex',
     alignItems: 'center',
-    gap: '12px',
-    marginBottom: '20px',
+    gap: theme.spacing.md,
+    marginBottom: theme.spacing.xl,
+  },
+  titleIcon: {
+    fontSize: '32px',
+    color: theme.colors.primary,
   },
   title: {
-    marginBottom: '20px',
+    fontSize: theme.typography.sizes['2xl'],
+    fontWeight: '600',
+    color: theme.colors.text.primary,
+    margin: 0,
   },
   betaBadge: {
     backgroundColor: '#FF4081',
     color: 'white',
     padding: '4px 8px',
     borderRadius: '4px',
-    fontSize: '14px',
+    fontSize: '12px',
     fontWeight: 'bold',
     textTransform: 'uppercase',
     letterSpacing: '1px',
@@ -473,16 +537,16 @@ const styles = {
     height: '480px',
     margin: '20px auto',
     backgroundColor: '#000',
-    borderRadius: '8px',
+    borderRadius: theme.borderRadius.lg,
     overflow: 'hidden',
     position: 'relative',
+    animation: 'scaleIn 0.5s ease forwards',
   },
   video: {
     width: '100%',
     height: '100%',
     objectFit: 'cover',
     transform: 'scaleX(-1)',
-    backgroundColor: '#000',
   },
   placeholder: {
     position: 'absolute',
@@ -490,106 +554,99 @@ const styles = {
     left: '50%',
     transform: 'translate(-50%, -50%)',
     color: '#fff',
-    fontSize: '20px',
-    textAlign: 'center',
-    zIndex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: theme.spacing.md,
   },
-  prediction: {
-    fontSize: '24px',
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  loading: {
-    textAlign: 'center',
-    padding: '20px',
-    fontSize: '18px',
-  },
-  error: {
-    color: 'red',
-    textAlign: 'center',
-    padding: '20px',
-    fontSize: '18px',
-  },
-  confidence: {
-    fontSize: '18px',
-    marginTop: '10px',
-    color: '#666',
+  placeholderIcon: {
+    fontSize: '48px',
   },
   controls: {
     display: 'flex',
-    gap: '10px',
+    gap: theme.spacing.md,
     justifyContent: 'center',
-    marginTop: '20px',
+    marginTop: theme.spacing.xl,
   },
   controlButton: {
-    padding: '10px 20px',
-    fontSize: '16px',
-    backgroundColor: '#4CAF50',
-    color: 'white',
+    padding: `${theme.spacing.md} ${theme.spacing.lg}`,
+    borderRadius: theme.borderRadius.md,
     border: 'none',
-    borderRadius: '4px',
+    color: 'white',
+    fontSize: theme.typography.sizes.base,
+    fontWeight: '500',
     cursor: 'pointer',
-  },
-  canvas: {
-    display: 'none',
-  },
-  timer: {
-    fontSize: '16px',
-    marginTop: '8px',
-    color: '#666',
-    fontWeight: 'normal',
-  },
-  bufferInfo: {
-    fontSize: '14px',
-    marginTop: '8px',
-    color: '#666',
-    fontStyle: 'italic'
-  },
-  predictionInfo: {
-    fontSize: '16px',
-    fontWeight: 'normal',
-    marginTop: '10px',
-    padding: '10px',
-    backgroundColor: 'rgba(0,0,0,0.05)',
-    borderRadius: '4px',
-  },
-  stabilityIndicator: {
-    fontSize: '14px',
-    color: '#666',
-    marginTop: '5px',
-    fontStyle: 'italic'
+    transition: 'all 0.2s ease',
+    display: 'flex',
+    alignItems: 'center',
+    gap: theme.spacing.sm,
   },
   predictionContainer: {
-    width: '100%',
-    maxWidth: '640px',
-    margin: '20px auto',
-    minHeight: '200px', // Fixed height to prevent layout shifts
-    backgroundColor: '#fff',
-    borderRadius: '8px',
-    padding: '20px',
-    boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+    marginTop: theme.spacing.xl,
+    animation: 'slideUp 0.5s ease forwards',
+    minHeight: '200px',
+  },
+  placeholderMessage: {
+    gridColumn: '1 / -1',
+    padding: theme.spacing.xl,
+    textAlign: 'center',
+    color: theme.colors.text.secondary,
+    fontSize: theme.typography.sizes.lg,
+    backgroundColor: `${theme.colors.primary}10`,
+    borderRadius: theme.borderRadius.md,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: '150px',
+    animation: 'fadeIn 0.3s ease forwards',
   },
   predictionBox: {
+    backgroundColor: theme.colors.background,
+    borderRadius: theme.borderRadius.lg,
+    padding: theme.spacing.lg,
+    border: `1px solid ${theme.colors.border}`,
+    minHeight: '200px',
     display: 'flex',
     flexDirection: 'column',
-    gap: '15px',
   },
   predictionHeader: {
-    fontSize: '18px',
-    fontWeight: 'bold',
-    padding: '10px 0',
-    borderBottom: '1px solid #eee',
+    fontSize: theme.typography.sizes.lg,
+    fontWeight: '500',
+    marginBottom: theme.spacing.md,
+    padding: theme.spacing.md,
+    borderBottom: `1px solid ${theme.colors.border}`,
   },
-  predictionInfo: {
+  predictionGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(2, 1fr)',
-    gap: '15px',
-    fontSize: '16px',
-    '& > div': {
-      padding: '8px',
-      backgroundColor: '#f5f5f5',
-      borderRadius: '4px',
-    }
+    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+    gap: theme.spacing.md,
+    flex: 1,
+  },
+  predictionItem: {
+    padding: theme.spacing.md,
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.borderRadius.md,
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  resultContainer: {
+    marginTop: theme.spacing.xl,
+    padding: theme.spacing.lg,
+    backgroundColor: theme.colors.background,
+    borderRadius: theme.borderRadius.lg,
+    border: `1px solid ${theme.colors.border}`,
+    animation: 'slideUp 0.5s ease forwards',
+  },
+  resultTitle: {
+    fontSize: theme.typography.sizes.lg,
+    fontWeight: '500',
+    marginBottom: theme.spacing.md,
+  },
+  resultText: {
+    fontSize: theme.typography.sizes.base,
+    lineHeight: '1.5',
+    color: theme.colors.text.primary,
   },
   disclaimerOverlay: {
     position: 'fixed',
@@ -644,6 +701,18 @@ const styles = {
     '&:hover': {
       backgroundColor: '#1976D2',
     },
+  },
+  loadingContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: '20px',
+  },
+  errorContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: '20px',
   },
 };
 
